@@ -1,18 +1,18 @@
-// SPDX-License-Identifier: <SPDX-License>
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
 
 import "openzeppelin-solidity/contracts/utils/math/SafeMath.sol";
 
 /**
- * The FMauro Token contract
+ * The FMFP Token contract
  */
 contract Token {
 	using SafeMath for uint;
 
 	// Variables
-	string public name = "FMauro Token";
-	string public symbol = "FMA";
+	string public name = "FMFP Token";
+	string public symbol = "FMFP";
 	uint256 public decimals = 18;
 	uint256 public totalSupply;
 	mapping (address => uint256) public balanceOf;

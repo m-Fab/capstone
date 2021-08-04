@@ -6,8 +6,8 @@ require('chai')
   .should()
 
 contract('Token', ([deployer, receiver, exchange]) => {
-  const name = 'FMauro Token'
-  const symbol = 'FMA'
+  const name = 'FMFP Token'
+  const symbol = 'FMFP'
   const decimals = '18'
   const totalSupply = tokens(1000000)
   let token
