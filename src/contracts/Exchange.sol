@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-// Deposit & Withdraw Funds
-// Manage Orders - Make or Cancel
-// Handle Trades - Charge fees
-
 pragma solidity ^0.8.0;
 
 import "openzeppelin-solidity/contracts/utils/math/SafeMath.sol";
@@ -23,6 +19,7 @@ contract Exchange {
   mapping (uint256 => _Order) public orders;
   uint256 public orderCount;
   mapping (uint256 => bool) public orderCancelled;
+  mapping (uint256 => bool) public orderFilled;
   
 
   // Events
@@ -30,6 +27,8 @@ contract Exchange {
   event Withdraw(address indexed _token, address indexed _user, uint256 _amount, uint256 _balance);
   event Order(uint256 _id, address _user, address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive, uint256 _timestamp);
   event Cancel(uint256 _id, address _user, address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive, uint256 _timestamp);
+  event Trade(uint256 _id, address _user, address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive, uint256 _feeAmount, address _userFill, uint256 _timestamp);
+  
 
   // Structs
   struct _Order {
@@ -97,17 +96,24 @@ contract Exchange {
   	orderCancelled[_id] = true;
   	emit Cancel(_order.id, msg.sender, _order.tokenGet, _order.amountGet, _order.tokenGive, _order.amountGive, block.timestamp);
   }
+
+  function fillOrder(uint256 _id) public {
+  	require(_id > 0 && _id <= orderCount);
+  	require(!orderFilled[_id]);
+  	require(!orderCancelled[_id]);
+  	_Order storage _order = orders[_id];
+  	_trade(_order.id, _order.user, _order.tokenGet, _order.amountGet, _order.tokenGive, _order.amountGive);
+  	orderFilled[_order.id] = true;
+  }
+  
+  function _trade(uint256 _id, address _user, address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive) internal {
+  	uint256 _feeAmount = _amountGive.mul(feePercent).div(100);
+  	tokens[_tokenGet][msg.sender] = tokens[_tokenGet][msg.sender].sub(_amountGet.add(_feeAmount));
+  	tokens[_tokenGet][_user] = tokens[_tokenGet][_user].add(_amountGet);
+  	tokens[_tokenGet][feeAccount] = tokens[_tokenGet][feeAccount].add(_feeAmount);
+  	tokens[_tokenGive][_user] = tokens[_tokenGive][_user].sub(_amountGive);
+  	tokens[_tokenGive][msg.sender] = tokens[_tokenGive][msg.sender].add(_amountGive);
+  	emit Trade(_id, _user, _tokenGet, _amountGet, _tokenGive, _amountGive, _feeAmount, msg.sender, block.timestamp);
+  }
   
 }
-
-// TODO :
-// [X] Set the fee account
-// [X] Deposit Ether
-// [X] Withdraw Ether
-// [X] Deposit Token
-// [X] Withdraw Token
-// [X] Check Balances
-// [X] Make Order
-// [ ] Fill Order
-// [X] Cancel Order
-// [ ] Charge fees
