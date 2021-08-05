@@ -7,3 +7,8 @@ export const tokens =(n) => {
     web3.utils.toWei(n.toString(), 'ether')
   )
 }
+
+export const wait = (seconds) => {
+  const milliseconds = seconds * 1000
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
