@@ -1,32 +1,34 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import './App.css';
-import Web3 from 'web3'
+import Web3 from 'web3' // Not needed if using Redux (which is not working in local...)
 import Token from '../abis/Token.json'
+import { 
+  loadWeb3,
+  loadAccount,
+  loadToken,
+  loadExchange
+} from '../store/interactions'
 
-class App extends Component{
+class App extends Component {
   componentDidMount() {
-    this.loadBlockchainData()
+    this.loadBlockchainData(this.props.dispatch)
   }
 
-  async loadBlockchainData() {
+  async loadBlockchainData(dispatch) {
+    //Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+    // const web3 = await loadWeb3(dispatch)
+    //Normal
     const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545');
-    // const networks = await web3.eth.net.getNetworkType()
-    // const accounts = await web3.eth.getAccounts()
-    // console.log("web3", web3)
-    // console.log("network", network)
-    // console.log("accounts", accounts)
 
-    var Contract = require('web3-eth-contract');
-    // set provider for all later instances to use
-    Contract.setProvider('HTTP://127.0.0.1:7545');
+    //Redux
+    const account = await loadAccount(web3, dispatch)
+    const token = await loadToken(web3, dispatch)
+    const exchange = await loadExchange(web3, dispatch)
 
-    const networkId = await web3.eth.net.getId();
-    const network = await Token.networks[networkId].address;
-    var contract = new Contract(Token.abi, network);
-    // console.log(contract)
-
-    const totalSupply = await contract.methods.totalSupply().call()
-    console.log(totalSupply)
+    //Brouillon
+    // const totalSupply = await contract.methods.totalSupply().call()
+    // console.log(totalSupply)
   }
 
   render() {
@@ -128,4 +130,10 @@ class App extends Component{
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+
+  }
+}
+
+export default connect(mapStateToProps)(App)
