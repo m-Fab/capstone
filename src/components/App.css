@@ -51,6 +51,8 @@
 
 .navbar {
   background-color: #20202E !important;
+  padding-left: 1%;
+  padding-right: 1%;
 }
 
 .vertical > div {

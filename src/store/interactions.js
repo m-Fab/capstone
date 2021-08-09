@@ -27,7 +27,7 @@ export const loadAccount = async (web3, dispatch) => {
 		dispatch(web3AccountLoaded(account))
 		return account
 	} else {
-		window.alert('Please login with Metamask')
+		console.log('Please login with Metamask')
 		return null
 	}
 	
@@ -42,7 +42,7 @@ export const loadToken = async (web3, dispatch) => {
 	  dispatch(tokenLoaded(contract))
 		return contract
 	} catch(err) {
-		window.alert('Contract not deployed to the current network. Please select another network with Metamask.')
+		console.log('Contract not deployed to the current network. Please select another network with Metamask.')
 		return null
 	}
 }
@@ -56,7 +56,7 @@ export const loadExchange = async (web3, dispatch) => {
 	  dispatch(exchangeLoaded(contract))
 		return contract
 	} catch(err) {
-		window.alert('Contract not deployed to the current network. Please select another network with Metamask.')
+		console.log('Contract not deployed to the current network. Please select another network with Metamask.')
 		return null
 	}
 }
