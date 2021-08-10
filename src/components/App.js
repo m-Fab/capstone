@@ -5,7 +5,7 @@ import Navbar from './Navbar'
 import Content from './Content'
 import Web3 from 'web3' // Not needed if using Redux (which is not working in local...)
 import { 
-  // loadWeb3,
+  // loadWeb3, Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
   loadAccount,
   loadToken,
   loadExchange

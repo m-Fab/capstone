@@ -93,6 +93,10 @@
   }
 }
 
+table, tr, th, td {
+  background-color: #383D51 !important;
+}
+
 .card {
   border-radius: 0px;
   display: flex;
