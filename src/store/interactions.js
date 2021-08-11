@@ -10,7 +10,9 @@ import {
 	filledOrdersLoaded,
 	allOrdersLoaded,
 	orderCancelling,
-	orderCancelled
+	orderCancelled,
+	orderFilling,
+	orderFilled
 } from './actions'
 
 export const loadWeb3 = (dispatch) => {
@@ -96,12 +98,31 @@ export const cancelOrder = (exchange, order, account, dispatch) => {
 	})
 }
 
+export const fillOrder = (exchange, order, account, dispatch) => {
+	exchange.methods.fillOrder(order._id).send({ from: account })
+	.on('transactionHash', (hash) => {
+		dispatch(orderFilling())
+	})
+	.on('error', (error) => {
+		console.log(error)
+		window.alert('There was an error for filling!')
+	})
+}
+
 export const subscribeToEvents = async (exchange, dispatch) => {
 	exchange.events.Cancel({}, (error, event) => {
 		dispatch(orderCancelled(event.returnValues))
 	})
 	.on('error', (error) => {
 		console.log(error)
-		window.alert('There was an error while subscribing to cancelling event!')
+		window.alert('There was an error while subscribing to Cancel event!')
+	})
+
+	exchange.events.Trade({}, (error, event) => {
+		dispatch(orderFilled(event.returnValues))
+	})
+	.on('error', (error) => {
+		console.log(error)
+		window.alert('There was an error while subscribing to Trade event!')
 	})
 }

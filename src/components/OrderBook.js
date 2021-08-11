@@ -1,32 +1,55 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Tooltip, OverlayTrigger } from 'react-bootstrap'
 import Spinner from './Spinner'
+import { fillOrder } from '../store/interactions'
 import {
   orderBookSelector,
-  orderBookLoadedSelector
+  orderBookLoadedSelector,
+  orderFillingSelector,
+  exchangeSelector,
+  accountSelector,
 } from '../store/selectors'
 
-const showOrderBook = (orderBook) => {
+const showOrderBook = (props) => {
+  const { orderBook } = props
   return(
     <tbody>
-      { orderBook.sellOrders.map((order) => renderOrder(order)) }
+      { orderBook.sellOrders.map((order) => renderOrder(order, props)) }
       <tr>
         <th>FMFP</th>
         <th>FMFP/ETH</th>
         <th>ETH</th>
       </tr>
-      { orderBook.buyOrders.map((order) => renderOrder(order)) }
+      { orderBook.buyOrders.map((order) => renderOrder(order, props)) }
     </tbody>
   )
 }
 
-const renderOrder = (order) => {
+const renderOrder = (order, props) => {
+  const { exchange, account, dispatch } = props
   return(
-    <tr key={ order._id }>
-      <td>{ order.tokenAmount }</td>
-      <td className={ `text-${ order.orderTypeClass }` }>{ order.tokenPrice }</td>
-      <td>{ order.etherAmount }</td>
-    </tr>
+    <OverlayTrigger
+      key={ order._id }
+      placement='top'
+      overlay={
+        <Tooltip id={ order._id }>
+          { `Click here to ${ order.orderFillAction }` }
+        </Tooltip>
+      }
+    >
+      <tr 
+        key={ order._id }
+        className="order-book-order"
+        onClick={
+          (e) => fillOrder(exchange, order, account, dispatch)
+        }
+      >
+        <td>{ order.tokenAmount }</td>
+        <td className={ `text-${ order.orderTypeClass }` }>{ order.tokenPrice }</td>
+        <td>{ order.etherAmount }</td>
+      </tr>
+    </OverlayTrigger>
   )
 }
 
@@ -40,7 +63,7 @@ class OrderBook extends Component {
           </div>
           <div className="card-body">
             <table className="table table-dark table-sm small">
-              { this.props.showOrderBook ? showOrderBook(this.props.orderBook) : <Spinner type="table" /> }
+              { this.props.showOrderBook ? showOrderBook(this.props) : <Spinner type="table" /> }
             </table>
           </div>
         </div>
@@ -50,9 +73,14 @@ class OrderBook extends Component {
 }
 
 function mapStateToProps(state) {
+  const orderBookLoaded = orderBookLoadedSelector(state)
+  const orderFilling = orderFillingSelector(state)
+
   return {
     orderBook: orderBookSelector(state),
-    showOrderBook: orderBookLoadedSelector(state)
+    showOrderBook: (orderBookLoaded && !orderFilling),
+    exchange: exchangeSelector(state),
+    account: accountSelector(state)
   }
 }
 
