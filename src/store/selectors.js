@@ -3,6 +3,7 @@ import moment from 'moment'
 import { createSelector } from 'reselect'
 import { GREEN, RED, ETHER_ADDRESS, tokens } from '../helpers'
 
+// Accounts and Smart Contracts
 const account = state => get(state, 'web3.account')
 export const accountSelector = createSelector(account, a => a)
 
@@ -47,6 +48,18 @@ export const filledOrdersSelector = createSelector(
 	}
 )
 
+// My Filled Orders
+export const myFilledOrdersSelector = createSelector(
+	account,
+	filledOrders,
+	(account, orders) => {
+		orders = orders.filter((o) => o._user === account || o._userFill === account)
+		orders = orders.sort((a,b) => a._timestamp - b._timestamp)
+		orders = decorateMyFilledOrders(orders, account)
+		return orders
+	}
+)
+
 // Order Book
 const openOrders = state => {
 	const all = allOrders(state)
@@ -81,6 +94,18 @@ export const orderBookSelector = createSelector(
 	}
 )
 
+// My Open Orders
+export const myOpenOrdersSelector = createSelector(
+	account,
+	openOrders,
+	(account, orders) => {
+		orders = orders.filter((o) => o._user === account)
+		orders = orders.sort((a,b) => a._timestamp - b._timestamp)
+		orders = decorateMyOpenOrders(orders)
+		return orders
+	}
+)
+
 // Decorate Filled Orders
 const decorateFilledOrders = (orders) => {
 	let previousOrder = orders[0] // Track previous order
@@ -98,6 +123,55 @@ const decorateFilledOrder = (order, previousOrder) => {
 	return ({
 		...order,
 		tokenPriceClass: tokenPriceClass(order.tokenPrice, order._id, previousOrder)
+	})
+}
+
+// Decorate My Filled orders
+const decorateMyFilledOrders = (orders, account) => {
+	return(
+		orders.map((order) => {
+			order = decorateOrder(order)
+			order = decorateMyFilledOrder(order, account)
+			return order
+		})
+	)
+}
+
+const decorateMyFilledOrder  = (order, account) => {
+	let orderType
+
+	if(order._user === account) {
+		orderType = order._tokenGive === ETHER_ADDRESS ? 'buy' : 'sell'
+	} else {
+		orderType = order._tokenGive === ETHER_ADDRESS ? 'sell' : 'buy'
+	}
+
+	return({
+		...order,
+		orderType,
+		orderTypeClass: (orderType === 'buy' ? GREEN : RED),
+		orderSign: (orderType === 'buy' ? '+' : '-')
+	})
+}
+
+// Decorate My Open Orders
+const decorateMyOpenOrders = (orders) => {
+	return(
+		orders.map((order) => {
+			order = decorateOrder(order)
+			order = decorateMyOpenOrder(order)
+			return order
+		})
+	)
+}
+
+const decorateMyOpenOrder = (order) => {
+	let orderType = (order._tokenGive === ETHER_ADDRESS ? 'buy' : 'sell')
+
+	return({
+		...order,
+		orderType,
+		orderTypeClass: (orderType === 'buy' ? GREEN : RED)
 	})
 }
 
