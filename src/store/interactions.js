@@ -8,7 +8,9 @@ import {
 	exchangeLoaded,
 	cancelledOrdersLoaded,
 	filledOrdersLoaded,
-	allOrdersLoaded
+	allOrdersLoaded,
+	orderCancelling,
+	orderCancelled
 } from './actions'
 
 export const loadWeb3 = (dispatch) => {
@@ -81,4 +83,25 @@ export const loadAllOrders = async (exchange, dispatch) => {
 	const orderStream = await exchange.getPastEvents('Order', { fromBlock: 0, toBlock: 'latest' })
 	const allOrders = orderStream.map((event) => event.returnValues)
 	dispatch(allOrdersLoaded(allOrders))
+}
+
+export const cancelOrder = (exchange, order, account, dispatch) => {
+	exchange.methods.cancelOrder(order._id).send({ from: account })
+	.on('transactionHash', (hash) => {
+		dispatch(orderCancelling())
+	})
+	.on('error', (error) => {
+		console.log(error)
+		window.alert('There was an error for cancelling!')
+	})
+}
+
+export const subscribeToEvents = async (exchange, dispatch) => {
+	exchange.events.Cancel({}, (error, event) => {
+		dispatch(orderCancelled(event.returnValues))
+	})
+	.on('error', (error) => {
+		console.log(error)
+		window.alert('There was an error while subscribing to cancelling event!')
+	})
 }
