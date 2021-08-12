@@ -1,6 +1,7 @@
 import Web3 from 'web3'
 import Token from '../abis/Token.json'
 import Exchange from '../abis/Exchange.json'
+import { ETHER_ADDRESS } from '../helpers'
 import { 
 	web3Loaded,
 	web3AccountLoaded,
@@ -12,7 +13,13 @@ import {
 	orderCancelling,
 	orderCancelled,
 	orderFilling,
-	orderFilled
+	orderFilled,
+	etherBalanceLoaded,
+	tokenBalanceLoaded,
+	exchangeEtherBalanceLoaded,
+	exchangeTokenBalanceLoaded,
+	balancesLoaded,
+	balancesLoading
 } from './actions'
 
 export const loadWeb3 = (dispatch) => {
@@ -93,7 +100,7 @@ export const cancelOrder = (exchange, order, account, dispatch) => {
 		dispatch(orderCancelling())
 	})
 	.on('error', (error) => {
-		console.log(error)
+		console.error(error)
 		window.alert('There was an error for cancelling!')
 	})
 }
@@ -104,8 +111,77 @@ export const fillOrder = (exchange, order, account, dispatch) => {
 		dispatch(orderFilling())
 	})
 	.on('error', (error) => {
-		console.log(error)
+		console.error(error)
 		window.alert('There was an error for filling!')
+	})
+}
+
+export const loadBalances = async (web3, exchange, token, account, dispatch) => {
+	if(typeof account !== 'undefined') {
+		const etherBalance = await web3.eth.getBalance(account)
+		dispatch(etherBalanceLoaded(etherBalance))
+
+		const tokenBalance = await token.methods.balanceOf(account).call()
+		dispatch(tokenBalanceLoaded(tokenBalance))
+
+		const exchangeEtherBalance = await exchange.methods.balanceOf(ETHER_ADDRESS, account).call()
+		dispatch(exchangeEtherBalanceLoaded(exchangeEtherBalance))
+
+		const exchangeTokenBalance = await exchange.methods.balanceOf(token.options.address, account).call()
+		dispatch(exchangeTokenBalanceLoaded(exchangeTokenBalance))
+
+		dispatch(balancesLoaded())
+	} else {
+		window.alert('Please login with Metamask')
+	}
+}
+
+export const depositEther = async (web3, exchange, token, account, amount, dispatch) => {
+	exchange.methods.depositEther().send({ from: account, value: web3.utils.toWei(amount, 'ether') })
+	.on('transactionHash', (hash) => {
+		dispatch(balancesLoading())
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while depositing!')
+	})
+}
+
+export const withdrawEther = async (web3, exchange, token, account, amount, dispatch) => {
+	exchange.methods.withdrawEther(web3.utils.toWei(amount, 'ether')).send({ from: account })
+	.on('transactionHash', (hash) => {
+		dispatch(balancesLoading())
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while withdrawing!')
+	})
+}
+
+export const depositToken = async (web3, exchange, token, account, amount, dispatch) => {
+	amount = web3.utils.toWei(amount, 'ether')
+
+	token.methods.approve(exchange.options.address, amount).send({ from: account })
+	.on('transactionHash', (hash) => {
+		exchange.methods.depositToken(token.options.address, amount).send({ from: account })
+		.on('transactionHash', (hash) => {
+			dispatch(balancesLoading())
+		})
+		.on('error', (error) => {
+			console.error(error)
+			window.alert('There was an error while depositing!')
+		})
+	})
+}
+
+export const withdrawToken = async (web3, exchange, token, account, amount, dispatch) => {
+	exchange.methods.withdrawToken(token.options.address, web3.utils.toWei(amount, 'ether')).send({ from: account })
+	.on('transactionHash', (hash) => {
+		dispatch(balancesLoading())
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while withdrawing!')
 	})
 }
 
@@ -114,7 +190,7 @@ export const subscribeToEvents = async (exchange, dispatch) => {
 		dispatch(orderCancelled(event.returnValues))
 	})
 	.on('error', (error) => {
-		console.log(error)
+		console.error(error)
 		window.alert('There was an error while subscribing to Cancel event!')
 	})
 
@@ -122,7 +198,23 @@ export const subscribeToEvents = async (exchange, dispatch) => {
 		dispatch(orderFilled(event.returnValues))
 	})
 	.on('error', (error) => {
-		console.log(error)
+		console.error(error)
 		window.alert('There was an error while subscribing to Trade event!')
+	})
+
+	exchange.events.Deposit({}, (error, event) => {
+		dispatch(balancesLoaded())
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while subscribing to Deposit event!')
+	})
+
+	exchange.events.Withdraw({}, (error, event) => {
+		dispatch(balancesLoaded())
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while subscribing to Withdraw event!')
 	})
 }

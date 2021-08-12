@@ -97,7 +97,7 @@ table, tr, th, td {
   background-color: #383D51 !important;
 }
 
-.tab-dark {
+.tab-dark, .btn-custom-dark {
   background-color: #20202E !important;
 }
 
