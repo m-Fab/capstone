@@ -19,7 +19,10 @@ import {
 	exchangeEtherBalanceLoaded,
 	exchangeTokenBalanceLoaded,
 	balancesLoaded,
-	balancesLoading
+	balancesLoading,
+	buyOrderMaking,
+	sellOrderMaking,
+	orderMade
 } from './actions'
 
 export const loadWeb3 = (dispatch) => {
@@ -185,6 +188,38 @@ export const withdrawToken = async (web3, exchange, token, account, amount, disp
 	})
 }
 
+export const makeBuyOrder = async (web3, exchange, token, account, order, dispatch) => {
+	const tokenGet = token.options.address
+	const amountGet = web3.utils.toWei(order.amount, 'ether')
+	const tokenGive = ETHER_ADDRESS
+	const amountGive = web3.utils.toWei((order.amount * order.price).toString(), 'ether')
+
+	exchange.methods.makeOrder(tokenGet, amountGet, tokenGive, amountGive).send({ from: account })
+	.on('transactionHash', (hash) => {
+		dispatch(buyOrderMaking())
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while making buy order!')
+	})
+}
+
+export const makeSellOrder = async (web3, exchange, token, account, order, dispatch) => {
+	const tokenGet = ETHER_ADDRESS
+	const amountGet = web3.utils.toWei((order.amount * order.price).toString(), 'ether')
+	const tokenGive = token.options.address
+	const amountGive = web3.utils.toWei(order.amount, 'ether')
+
+	exchange.methods.makeOrder(tokenGet, amountGet, tokenGive, amountGive).send({ from: account })
+	.on('transactionHash', (hash) => {
+		dispatch(sellOrderMaking())
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while making sell order!')
+	})
+}
+
 export const subscribeToEvents = async (exchange, dispatch) => {
 	exchange.events.Cancel({}, (error, event) => {
 		dispatch(orderCancelled(event.returnValues))
@@ -216,5 +251,13 @@ export const subscribeToEvents = async (exchange, dispatch) => {
 	.on('error', (error) => {
 		console.error(error)
 		window.alert('There was an error while subscribing to Withdraw event!')
+	})
+
+	exchange.events.Order({}, (error, event) => {
+		dispatch(orderMade(event.returnValues))
+	})
+	.on('error', (error) => {
+		console.error(error)
+		window.alert('There was an error while subscribing to Order event!')
 	})
 }
