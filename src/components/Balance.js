@@ -11,7 +11,7 @@ import {
   withdrawToken
 } from '../store/interactions'
 import {
-  // web3Selector, // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+  web3Selector, // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
   exchangeSelector,
   tokenSelector,
   accountSelector,
@@ -34,8 +34,9 @@ import {
 
 const showForm = (props) => {
   // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
-  const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
+  // const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
   const {
+    web3,
     etherBalance,
     tokenBalance,
     exchangeEtherBalance,
@@ -207,7 +208,7 @@ class Balance extends Component {
 
 function mapStateToProps(state) {
   return {
-    // web3: web3Selector(state), // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+    web3: web3Selector(state), // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
     exchange: exchangeSelector(state),
     token: tokenSelector(state),
     account: accountSelector(state),

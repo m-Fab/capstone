@@ -5,8 +5,8 @@ import { GREEN, RED, ETHER_ADDRESS, tokens, formatBalance } from '../helpers'
 
 // Accounts and Smart Contracts
 // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
-// const web3 = state => get(state, 'web3.connection')
-// export const web3Selector = createSelector(account, w => w)
+const web3 = state => get(state, 'web3.connection')
+export const web3Selector = createSelector(web3, w => w)
 
 const account = state => get(state, 'web3.account')
 export const accountSelector = createSelector(account, a => a)

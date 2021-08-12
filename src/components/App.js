@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import './App.css'
 import Navbar from './Navbar'
 import Content from './Content'
-import Web3 from 'web3' // Not needed if using Redux (which is not working in local...)
+// import Web3 from 'web3' // Not needed if using Redux (which is not working in local...)
 import { 
-  // loadWeb3, Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+  loadWeb3, // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
   loadAccount,
   loadToken,
   loadExchange
@@ -19,9 +19,9 @@ class App extends Component {
 
   async loadBlockchainData(dispatch) {
     // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
-    // const web3 = await loadWeb3(dispatch)
+    const web3 = await loadWeb3(dispatch)
     // Normal
-    const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
+    // const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
 
     // Redux
     const account = await loadAccount(web3, dispatch)

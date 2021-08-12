@@ -17,7 +17,7 @@ class Content extends Component {
   async loadBlockchainData(props) {
     const { exchange, dispatch } = props
     await loadAllOrders(exchange, dispatch)
-    // await subscribeToEvents(exchange, dispatch) // Not working in local (ganache) with web3 +1.* * see https://github.com/trufflesuite/ganache-cli/issues/257
+    await subscribeToEvents(exchange, dispatch) // Not working in local (ganache) with web3 +1.* * see https://github.com/trufflesuite/ganache-cli/issues/257
   }
 
   render() {

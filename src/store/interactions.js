@@ -27,7 +27,7 @@ import {
 
 export const loadWeb3 = (dispatch) => {
 	if(typeof window.ethereum!=='undefined') {
-		const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
+		const web3 = new Web3(window.ethereum)
 		dispatch(web3Loaded(web3))
 		return web3
 	} else {
@@ -52,11 +52,9 @@ export const loadAccount = async (web3, dispatch) => {
 
 export const loadToken = async (web3, dispatch) => {
 	try {
-		var Contract = require('web3-eth-contract')
-		Contract.setProvider('HTTP://127.0.0.1:7545')
 	  const networkId = await web3.eth.net.getId()
 	  const network = await Token.networks[networkId].address
-	  var contract = new Contract(Token.abi, network)
+	  var contract = new web3.eth.Contract(Token.abi, network)
 	  dispatch(tokenLoaded(contract))
 		return contract
 	} catch(err) {
@@ -67,11 +65,9 @@ export const loadToken = async (web3, dispatch) => {
 
 export const loadExchange = async (web3, dispatch) => {
 	try {
-		var Contract = require('web3-eth-contract')
-		Contract.setProvider('HTTP://127.0.0.1:7545')
 	  const networkId = await web3.eth.net.getId()
 	  const network = await Exchange.networks[networkId].address
-	  var contract = new Contract(Exchange.abi, network)
+	  var contract = new web3.eth.Contract(Exchange.abi, network)
 	  dispatch(exchangeLoaded(contract))
 		return contract
 	} catch(err) {
