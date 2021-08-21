@@ -6,7 +6,7 @@ import { chartOptions } from './PriceChart.config'
 import {
   filledOrdersLoadedSelector,
   priceChartSelector
-} from '../store/selectors'
+} from '../store/selectors/selectorsOrders'
 
 const showPriceChart = (priceChart) => {
   return(

@@ -10,7 +10,7 @@ import {
   loadToken,
   loadExchange
 } from '../store/interactions'
-import { contractsLoadedSelector } from '../store/selectors'
+import { contractsLoadedSelector } from '../store/selectors/selectorsWeb3.js'
 
 class App extends Component {
   componentDidMount() {

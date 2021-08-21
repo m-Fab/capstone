@@ -3,14 +3,16 @@ import { connect } from 'react-redux'
 import Spinner from './Spinner'
 import { Tabs, Tab } from 'react-bootstrap'
 import {
+  exchangeSelector,
+  accountSelector
+} from '../store/selectors/selectorsWeb3'
+import {
   filledOrdersLoadedSelector,
   myFilledOrdersSelector,
   orderBookLoadedSelector,
   myOpenOrdersSelector,
-  exchangeSelector,
-  accountSelector,
   orderCancellingSelector
-} from '../store/selectors'
+} from '../store/selectors/selectorsOrders'
 import { cancelOrder } from '../store/interactions'
 
 const showMyFilledOrders = (myFilledOrders) => {

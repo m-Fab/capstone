@@ -7,10 +7,12 @@ import {
   web3Selector, // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
   exchangeSelector,
   tokenSelector,
-  accountSelector,
+  accountSelector
+} from '../store/selectors/selectorsWeb3'
+import {
   buyOrderSelector,
   sellOrderSelector
-} from '../store/selectors'
+} from '../store/selectors/selectorsOrders'
 import { 
   buyOrderAmountChanged,
   sellOrderAmountChanged,

@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { loadAllOrders, subscribeToEvents } from '../store/interactions'
-import { exchangeSelector } from '../store/selectors'
+import {
+  web3Selector,
+  exchangeSelector,
+  tokenSelector,
+  accountSelector
+} from '../store/selectors/selectorsWeb3'
 import Trades from './Trades'
 import OrderBook from './OrderBook'
 import MyTransactions from './MyTransactions'
@@ -15,9 +20,9 @@ class Content extends Component {
   }
 
   async loadBlockchainData(props) {
-    const { exchange, dispatch } = props
+    const { web3, exchange, token, account, dispatch } = props
     await loadAllOrders(exchange, dispatch)
-    await subscribeToEvents(exchange, dispatch) // Not working in local (ganache) with web3 +1.* * see https://github.com/trufflesuite/ganache-cli/issues/257
+    await subscribeToEvents(web3, exchange, token, account, dispatch) // Not working in local (ganache) with web3 +1.* * see https://github.com/trufflesuite/ganache-cli/issues/257
   }
 
   render() {
@@ -45,7 +50,10 @@ class Content extends Component {
 
 function mapStateToProps(state) {
   return {
-    exchange: exchangeSelector(state)
+    web3: web3Selector(state),
+    exchange: exchangeSelector(state),
+    token: tokenSelector(state),
+    account: accountSelector(state)
   }
 }
 

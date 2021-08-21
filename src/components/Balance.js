@@ -14,17 +14,21 @@ import {
   web3Selector, // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
   exchangeSelector,
   tokenSelector,
-  accountSelector,
-  etherBalanceSelector,
-  tokenBalanceSelector,
-  exchangeEtherBalanceSelector,
-  exchangeTokenBalanceSelector,
-  balancesLoadingSelector,
+  accountSelector
+} from '../store/selectors/selectorsWeb3'
+import {
   etherDepositAmountSelector,
   etherWithdrawAmountSelector,
   tokenDepositAmountSelector,
   tokenWithdrawAmountSelector
-} from '../store/selectors'
+} from '../store/selectors/selectorsOrders'
+import {
+  balancesLoadingSelector,
+  etherBalanceSelector,
+  tokenBalanceSelector,
+  exchangeEtherBalanceSelector,
+  exchangeTokenBalanceSelector
+} from '../store/selectors/selectorsBalances'
 import { 
   etherDepositAmountChanged,
   etherWithdrawAmountChanged,
@@ -199,7 +203,7 @@ class Balance extends Component {
           Balance
         </div>
         <div className="card-body">
-          { !this.props.balancesLoading ? showForm(this.props) : <Spinner /> }
+          { this.props.showForm ? showForm(this.props) : <Spinner /> }
         </div>
       </div>
     )
@@ -207,6 +211,8 @@ class Balance extends Component {
 }
 
 function mapStateToProps(state) {
+  const balancesLoading = balancesLoadingSelector(state)
+
   return {
     web3: web3Selector(state), // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
     exchange: exchangeSelector(state),
@@ -216,7 +222,8 @@ function mapStateToProps(state) {
     tokenBalance: tokenBalanceSelector(state),
     exchangeEtherBalance: exchangeEtherBalanceSelector(state),
     exchangeTokenBalance: exchangeTokenBalanceSelector(state),
-    balancesLoading: balancesLoadingSelector(state),
+    balancesLoading,
+    showForm: !balancesLoading,
     etherDepositAmount: etherDepositAmountSelector(state),
     etherWithdrawAmount: etherWithdrawAmountSelector(state),
     tokenDepositAmount: tokenDepositAmountSelector(state),

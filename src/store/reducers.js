@@ -111,12 +111,12 @@ function exchange(state = {}, action) {
 					...state.allOrders,
 					data
 				},
-				buyOrders: {
-					...state.buyOrders,
+				buyOrder: {
+					...state.buyOrder,
 					making: false
 				},
-				sellOrders: {
-					...state.sellOrders,
+				sellOrder: {
+					...state.sellOrder,
 					making: false
 				},
 			}

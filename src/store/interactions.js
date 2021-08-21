@@ -216,7 +216,7 @@ export const makeSellOrder = async (web3, exchange, token, account, order, dispa
 	})
 }
 
-export const subscribeToEvents = async (exchange, dispatch) => {
+export const subscribeToEvents = async (web3, exchange, token, account, dispatch) => {
 	exchange.events.Cancel({}, (error, event) => {
 		dispatch(orderCancelled(event.returnValues))
 	})
@@ -233,7 +233,17 @@ export const subscribeToEvents = async (exchange, dispatch) => {
 		window.alert('There was an error while subscribing to Trade event!')
 	})
 
-	exchange.events.Deposit({}, (error, event) => {
+	exchange.events.Deposit({}, async (error, event) => {
+		if (event.returnValues._token === ETHER_ADDRESS) {
+	    const etherBalance = await web3.eth.getBalance(account)
+	    dispatch(etherBalanceLoaded(etherBalance))
+	    dispatch(exchangeEtherBalanceLoaded(event.returnValues._balance))
+	  } else {
+	    const tokenBalance = await token.methods.balanceOf(account).call()
+	    dispatch(tokenBalanceLoaded(tokenBalance))
+	    dispatch(exchangeTokenBalanceLoaded(event.returnValues._balance))
+	  }
+		// dispatchNewBalances(event, web3, token, account, dispatch)
 		dispatch(balancesLoaded())
 	})
 	.on('error', (error) => {
@@ -241,7 +251,17 @@ export const subscribeToEvents = async (exchange, dispatch) => {
 		window.alert('There was an error while subscribing to Deposit event!')
 	})
 
-	exchange.events.Withdraw({}, (error, event) => {
+	exchange.events.Withdraw({}, async(error, event) => {
+		if (event.returnValues._token === ETHER_ADDRESS) {
+	    const etherBalance = await web3.eth.getBalance(account)
+	    dispatch(etherBalanceLoaded(etherBalance))
+	    dispatch(exchangeEtherBalanceLoaded(event.returnValues._balance))
+	  } else {
+	    const tokenBalance = await token.methods.balanceOf(account).call()
+	    dispatch(tokenBalanceLoaded(tokenBalance))
+	    dispatch(exchangeTokenBalanceLoaded(event.returnValues._balance))
+	  }
+		// dispatchNewBalances(event, web3, token, account, dispatch)
 		dispatch(balancesLoaded())
 	})
 	.on('error', (error) => {
@@ -257,3 +277,4 @@ export const subscribeToEvents = async (exchange, dispatch) => {
 		window.alert('There was an error while subscribing to Order event!')
 	})
 }
+

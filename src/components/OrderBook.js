@@ -6,10 +6,12 @@ import { fillOrder } from '../store/interactions'
 import {
   orderBookSelector,
   orderBookLoadedSelector,
-  orderFillingSelector,
+  orderFillingSelector
+} from '../store/selectors/selectorsOrders'
+import {
   exchangeSelector,
-  accountSelector,
-} from '../store/selectors'
+  accountSelector
+} from '../store/selectors/selectorsWeb3'
 
 const showOrderBook = (props) => {
   const { orderBook } = props

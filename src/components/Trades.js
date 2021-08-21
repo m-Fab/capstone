@@ -4,7 +4,7 @@ import Spinner from './Spinner'
 import { 
 	filledOrdersSelector,
 	filledOrdersLoadedSelector
-} from '../store/selectors'
+} from '../store/selectors/selectorsOrders'
 
 const showFilledOrders = (filledOrders) => {
 	return(
