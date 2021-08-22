@@ -11,7 +11,7 @@ class Navbar extends Component {
           <span className="navbar-toggler-icon"></span>
         </button>
         <ul className="navbar-nav mx-auto">
-          <div class="alert alert-warning" role="alert">
+          <div className="alert alert-warning" role="alert">
             This exchange is deployed on the <a href="https://goerli.etherscan.io/">Goerli Testnet</a>.
             It's purpose is for testing only. If you need some Ether on Goerli testnet,
             you can use this <a href="https://faucet.goerli.mudit.blog/">faucet</a> working with Facebook or Twitter.

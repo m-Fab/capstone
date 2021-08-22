@@ -243,7 +243,6 @@ export const subscribeToEvents = async (web3, exchange, token, account, dispatch
 	    dispatch(tokenBalanceLoaded(tokenBalance))
 	    dispatch(exchangeTokenBalanceLoaded(event.returnValues._balance))
 	  }
-		// dispatchNewBalances(event, web3, token, account, dispatch)
 		dispatch(balancesLoaded())
 	})
 	.on('error', (error) => {
@@ -251,7 +250,7 @@ export const subscribeToEvents = async (web3, exchange, token, account, dispatch
 		window.alert('There was an error while subscribing to Deposit event!')
 	})
 
-	exchange.events.Withdraw({}, async(error, event) => {
+	exchange.events.Withdraw({}, async (error, event) => {
 		if (event.returnValues._token === ETHER_ADDRESS) {
 	    const etherBalance = await web3.eth.getBalance(account)
 	    dispatch(etherBalanceLoaded(etherBalance))
@@ -261,7 +260,6 @@ export const subscribeToEvents = async (web3, exchange, token, account, dispatch
 	    dispatch(tokenBalanceLoaded(tokenBalance))
 	    dispatch(exchangeTokenBalanceLoaded(event.returnValues._balance))
 	  }
-		// dispatchNewBalances(event, web3, token, account, dispatch)
 		dispatch(balancesLoaded())
 	})
 	.on('error', (error) => {
