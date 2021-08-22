@@ -117,6 +117,8 @@ export const fillOrder = (exchange, order, account, dispatch) => {
 
 export const loadBalances = async (web3, exchange, token, account, dispatch) => {
 	if(typeof account !== 'undefined') {
+		dispatch(balancesLoading())
+
 		const etherBalance = await web3.eth.getBalance(account)
 		dispatch(etherBalanceLoaded(etherBalance))
 
@@ -273,6 +275,32 @@ export const subscribeToEvents = async (web3, exchange, token, account, dispatch
 	.on('error', (error) => {
 		console.error(error)
 		window.alert('There was an error while subscribing to Order event!')
+	})
+
+	window.ethereum.on('accountsChanged', async function (accounts) {
+	  // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+    const web3 = await loadWeb3(dispatch)
+    // Normal
+    // const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
+
+    // Redux
+    const account = await loadAccount(web3, dispatch)
+    if(!account) {
+      window.alert('Please login with Metamask.')
+      return
+    }
+    const token = await loadToken(web3, dispatch)
+    if(!token) {
+      window.alert('Token Smart Contract not deployed to the current network. Please select another network with Metamask.')
+      return
+    }
+    const exchange = await loadExchange(web3, dispatch)
+    if(!exchange) {
+      window.alert('Exchange Smart Contract not deployed to the current network. Please select another network with Metamask.')
+      return
+    }
+
+    await loadBalances(web3, exchange, token, account, dispatch)
 	})
 }
 
