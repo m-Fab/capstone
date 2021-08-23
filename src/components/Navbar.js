@@ -11,18 +11,20 @@ class Navbar extends Component {
           <span className="navbar-toggler-icon"></span>
         </button>
         <ul className="navbar-nav mx-auto">
-          <div className="alert alert-warning" role="alert">
-            This exchange is deployed on the <a href="https://goerli.etherscan.io/">Goerli Testnet</a>.
-            It's purpose is for testing only. If you need some Ether on Goerli testnet,
-            you can use this <a href="https://faucet.goerli.mudit.blog/">faucet</a> working with Facebook or Twitter.
-            You can also find other faucets <a href="https://cryptomarketpool.com/ethereum-test-environments/">here</a>.
-          </div>
+          <li className="nav-item">
+            <div className="alert alert-warning" role="alert">
+              This exchange is deployed on the <a href="https://goerli.etherscan.io/">Goerli Testnet</a>.
+              It's purpose is for testing only. If you need some Ether on Goerli testnet,
+              you can use this <a href="https://faucet.goerli.mudit.blog/">faucet</a> working with Facebook or Twitter.
+              You can also find other faucets <a href="https://cryptomarketpool.com/ethereum-test-environments/">here</a>.
+            </div>
+          </li>
         </ul>
         <ul className="navbar-nav ms-auto">
           <li className="nav-item">
-          <a className="nav-link small" href={`https://etherscan.io/address/${this.props.account}`} target="_blank" rel="noreferrer">
-            {this.props.account}
-          </a>
+            <a className="nav-link small" href={`https://etherscan.io/address/${this.props.account}`} target="_blank" rel="noreferrer">
+              {this.props.account}
+            </a>
           </li>
         </ul>
       </nav>
