@@ -4,9 +4,6 @@ require('dotenv').config();
 
 const privateKeys = process.env.PRIVATE_KEYS || ""
 const HDWalletProvider = require('truffle-hdwallet-provider-privkey');
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 module.exports = {
   networks: {
@@ -15,22 +12,11 @@ module.exports = {
     //  port: 7545,
     //  network_id: "*",
     // },
-    // kovan: {
-    //   provider: function() {
-    //     return new HDWalletProvider(
-    //       privateKeys.split(','),
-    //       `https://kovan.infura.io/v3/${ process.env.INFURA_API_KEY }`
-    //     )
-    //   },
-    //   gas: 50000,
-    //   gasPrice: 5000000000,
-    //   network_id: 42,
-    // },
     goerli: {
       provider: function() {
         return new HDWalletProvider(
           privateKeys.split(','),
-          `wss://goerli.infura.io/ws/v3/${ process.env.INFURA_API_KEY }`
+          `${ process.env.URL_GOERLI }${ process.env.INFURA_API_KEY }`
         )
       },
       gas: 5000000,

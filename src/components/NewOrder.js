@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-// import Web3 from 'web3' // Not needed if using Redux (which is not working in local...)
 import Spinner from './Spinner'
 import { Tabs, Tab } from 'react-bootstrap'
 import {
-  web3Selector, // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+  web3Selector,
   exchangeSelector,
   tokenSelector,
   accountSelector
@@ -25,8 +24,6 @@ import {
 } from '../store/interactions'
 
 const showForm = (props) => {
-  // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
-  // const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
   const {
     web3,
     exchange,
@@ -41,6 +38,7 @@ const showForm = (props) => {
 
   return(
     <Tabs defaultActiveKey="buy" className="tab-dark text-white">
+
       <Tab eventKey="buy" title="Buy">
         <form onSubmit={(event) => {
           event.preventDefault()
@@ -74,6 +72,7 @@ const showForm = (props) => {
           { showBuyTotal ? <div><small>Total: {buyOrder.amount * buyOrder.price} ETH</small></div> : null }
         </form>
       </Tab>
+
       <Tab eventKey="sell" title="Sell">
         <form onSubmit={(event) => {
           event.preventDefault()
@@ -107,6 +106,7 @@ const showForm = (props) => {
           { showSellTotal ? <div><small>Total: {sellOrder.amount * sellOrder.price} ETH</small></div> : null }
         </form>
       </Tab>
+
     </Tabs>
   )
 }
@@ -131,7 +131,7 @@ function mapStateToProps(state) {
   const sellOrder = sellOrderSelector(state)
 
   return {
-    web3: web3Selector(state), // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+    web3: web3Selector(state), // Redux not working in local (Ganache) for web3 selector - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
     exchange: exchangeSelector(state),
     token: tokenSelector(state),
     account: accountSelector(state),

@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Tabs, Tab } from 'react-bootstrap'
 import Spinner from './Spinner'
-import Web3 from 'web3' // Not needed if using Redux (which is not working in local...)
 import { 
   loadBalances,
   depositEther,
@@ -11,7 +10,7 @@ import {
   withdrawToken
 } from '../store/interactions'
 import {
-  web3Selector, // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+  web3Selector,
   exchangeSelector,
   tokenSelector,
   accountSelector
@@ -37,8 +36,6 @@ import {
 } from '../store/actions'
 
 const showForm = (props) => {
-  // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
-  // const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
   const {
     web3,
     etherBalance,
@@ -181,21 +178,6 @@ const showForm = (props) => {
 }
 
 class Balance extends Component {
-  componentDidMount() {
-    this.loadBlockchainData()
-  }
-
-  async loadBlockchainData() {
-    // Redux not working in local - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
-    const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545')
-
-    const { 
-      // web3, // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
-      exchange, token, account, dispatch
-    } = this.props
-    await loadBalances(web3, exchange, token, account, dispatch)
-  }
-
   render() {
     return (
       <div className="card text-white">
@@ -203,7 +185,7 @@ class Balance extends Component {
           Balance
         </div>
         <div className="card-body">
-          { this.props.showForm ? showForm(this.props) : <Spinner /> }
+          { !this.props.balancesLoading ? showForm(this.props) : <Spinner /> }
         </div>
       </div>
     )
@@ -211,10 +193,8 @@ class Balance extends Component {
 }
 
 function mapStateToProps(state) {
-  const balancesLoading = balancesLoadingSelector(state)
-
   return {
-    web3: web3Selector(state), // - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
+    web3: web3Selector(state), // Redux not working in local (Ganache) for web3 selector - see https://www.gitmemory.com/issue/ethereum/web3.js/2665/687164093
     exchange: exchangeSelector(state),
     token: tokenSelector(state),
     account: accountSelector(state),
@@ -222,8 +202,7 @@ function mapStateToProps(state) {
     tokenBalance: tokenBalanceSelector(state),
     exchangeEtherBalance: exchangeEtherBalanceSelector(state),
     exchangeTokenBalance: exchangeTokenBalanceSelector(state),
-    balancesLoading,
-    showForm: !balancesLoading,
+    balancesLoading: balancesLoadingSelector(state),
     etherDepositAmount: etherDepositAmountSelector(state),
     etherWithdrawAmount: etherWithdrawAmountSelector(state),
     tokenDepositAmount: tokenDepositAmountSelector(state),

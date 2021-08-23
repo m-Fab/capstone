@@ -44,7 +44,7 @@ const showMyOpenOrders = (props) => {
                 onClick={(e) => {
                   cancelOrder(exchange, order, account, dispatch)
                 }}
-            >X</td>
+            ><span className="text-warning">&#10007;</span></td>
           </tr>
         )
       }) }
